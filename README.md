@@ -24,7 +24,7 @@ Image Scaling – using getScaledInstance() for smooth image resizing
 
 
 🖼️ **PROJECT STRUCTURE**
-Java_Assignment
+Java_Assignment/
 │
 
 ├── RadioButtonDemo.java        # Main Java source file
@@ -34,6 +34,7 @@ Java_Assignment
 ├── README.md                   # Project documentation
 
 └── images/                     # Folder containing pet images
+
     ├── bird.png
     
     ├── cat.png
