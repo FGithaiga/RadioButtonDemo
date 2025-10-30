@@ -1,92 +1,90 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 
-public class RadioButtonDemo extends JFrame implements ActionListener {
-    private JRadioButton birdButton, catButton, dogButton, rabbitButton, pigButton;
-    private JLabel imageLabel;
-
-    public RadioButtonDemo() {
-        setTitle("RadioButtonDemo");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 350);
-        setLayout(new BorderLayout(10, 10));  // Use BorderLayout for better control
-
-        // ===== Left side panel for radio buttons =====
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));  // vertical layout
+class RadioButtonDemo {
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Radio Button Demo");
+        frame.setSize(500, 400);
+        frame.setLayout(new BorderLayout());
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Create radio buttons
-        birdButton = new JRadioButton("Bird");
-        catButton = new JRadioButton("Cat");
-        dogButton = new JRadioButton("Dog");
-        rabbitButton = new JRadioButton("Rabbit");
-        pigButton = new JRadioButton("Pig");
+        JRadioButton bird = new JRadioButton("Bird");
+        JRadioButton cat = new JRadioButton("Cat");
+        JRadioButton dog = new JRadioButton("Dog");
+        JRadioButton rabbit = new JRadioButton("Rabbit");
+        JRadioButton pig = new JRadioButton("Pig");
 
-        // Add buttons to a group
+        // Group them so only one can be selected
         ButtonGroup group = new ButtonGroup();
-        group.add(birdButton);
-        group.add(catButton);
-        group.add(dogButton);
-        group.add(rabbitButton);
-        group.add(pigButton);
+        group.add(bird);
+        group.add(cat);
+        group.add(dog);
+        group.add(rabbit);
+        group.add(pig);
+
+        // Panel for buttons
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(5, 1));
+        panel.add(bird);
+        panel.add(cat);
+        panel.add(dog);
+        panel.add(rabbit);
+        panel.add(pig);
+
+        // Label for showing images
+        JLabel label = new JLabel();
+        label.setHorizontalAlignment(JLabel.CENTER);
+
+        // Add components to frame
+        frame.add(panel, BorderLayout.WEST);
+        frame.add(label, BorderLayout.CENTER);
+
+        // Function to show image
+        ActionListener showImage = new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Get button text and convert to lowercase to match file names
+                String pet = ((JRadioButton) e.getSource()).getText().toLowerCase();
+
+                // Define possible image extensions
+                String[] exts = {".jpg", ".jpeg", ".png"};
+
+                ImageIcon foundIcon = null;
+
+                // Check inside images/ folder
+                for (String ext : exts) {
+                    String path = "images/" + pet + ext;
+                    File file = new File(path);
+                    if (file.exists()) {
+                        foundIcon = new ImageIcon(file.getAbsolutePath());
+                        break;
+                    }
+                }
+
+                if (foundIcon == null || foundIcon.getIconWidth() == -1) {
+                    JOptionPane.showMessageDialog(frame, "Image not found for: " + pet);
+                    label.setIcon(null);
+                    return;
+                }
+
+                // Scale image nicely
+                Image img = foundIcon.getImage();
+                Image scaled = img.getScaledInstance(250, 250, Image.SCALE_SMOOTH);
+                label.setIcon(new ImageIcon(scaled));
+
+                JOptionPane.showMessageDialog(frame, "You selected " + pet.substring(0, 1).toUpperCase() + pet.substring(1));
+            }
+        };
 
         // Add listeners
-        birdButton.addActionListener(this);
-        catButton.addActionListener(this);
-        dogButton.addActionListener(this);
-        rabbitButton.addActionListener(this);
-        pigButton.addActionListener(this);
+        bird.addActionListener(showImage);
+        cat.addActionListener(showImage);
+        dog.addActionListener(showImage);
+        rabbit.addActionListener(showImage);
+        pig.addActionListener(showImage);
 
-        // Add buttons to the panel
-        buttonPanel.add(birdButton);
-        buttonPanel.add(catButton);
-        buttonPanel.add(dogButton);
-        buttonPanel.add(rabbitButton);
-        buttonPanel.add(pigButton);
-
-        // ===== Image label (right side) =====
-        imageLabel = new JLabel();
-        imageLabel.setPreferredSize(new Dimension(200, 200));
-        imageLabel.setHorizontalAlignment(JLabel.CENTER);
-
-        // 🐷 Default selection and image
-        pigButton.setSelected(true);
-        imageLabel.setIcon(resizeImage("images/pig.png"));
-
-        // ===== Add to frame =====
-        add(buttonPanel, BorderLayout.WEST);   // buttons on the left
-        add(imageLabel, BorderLayout.CENTER);  // image in the middle
-
-        // Center the window on screen
-        setLocationRelativeTo(null);
-        setVisible(true);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == birdButton) {
-            imageLabel.setIcon(resizeImage("images/bird.png"));
-        } else if (e.getSource() == catButton) {
-            imageLabel.setIcon(resizeImage("images/cat.png"));
-        } else if (e.getSource() == dogButton) {
-            imageLabel.setIcon(resizeImage("images/dog.png"));
-        } else if (e.getSource() == rabbitButton) {
-            imageLabel.setIcon(resizeImage("images/rabbit.png")); // double-check extension!
-        } else if (e.getSource() == pigButton) {
-            imageLabel.setIcon(resizeImage("images/pig.png"));
-        }
-    }
-
-    // Resize images for neat display
-    private ImageIcon resizeImage(String path) {
-        ImageIcon icon = new ImageIcon(path);
-        Image img = icon.getImage();
-        Image newImg = img.getScaledInstance(150, 150, Image.SCALE_SMOOTH);
-        return new ImageIcon(newImg);
-    }
-
-    public static void main(String[] args) {
-        new RadioButtonDemo();
+        frame.setVisible(true);
     }
 }
